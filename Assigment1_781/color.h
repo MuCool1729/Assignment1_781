@@ -70,7 +70,7 @@ public:
 	}
 
 	friend std::ostream& operator << (std::ostream& os, const Color& c) {
-		os << "rgba: " << c.red << " " << c.blue << " " << c.green << " " << c.alpha << "\n";
+		os << "rgba: " << c.red << " " << c.blue << " " << c.green << " " << c.alpha;
 		return os;
 	}
 };

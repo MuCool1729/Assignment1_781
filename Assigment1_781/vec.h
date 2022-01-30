@@ -115,7 +115,7 @@ public:
 	}
 	
 	friend std::ostream& operator << (std::ostream & os, const Vec & v){
-		os << v.x << " " << v.y << " " << v.z << "\n";
+		os << v.x << " " << v.y << " " << v.z;
 		return os;
 	}
 };

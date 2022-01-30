@@ -19,6 +19,10 @@ public:
 		this->color = color;
 	}
 
+	Sphere(Vec centre, double radius) :centre(centre), radius(radius) {
+		this->color = Color(1.0, 1.0, 1.0, 1.0);
+	}
+
 	bool isOnSurface(Vec point) {
 		double distance = ((centre - point) * (centre - point)).Sum();
 		distance = sqrt(distance);
@@ -39,6 +43,33 @@ public:
 	}
 
 	double findIntersection(Ray ray) override {
+		Vec ray_origin = ray.origin;
+		Vec ray_direction = ray.direction.normalize();
 
+		double a = 1.0;
+		double b = 2 * (ray_direction.x * (ray_origin.x - centre.x) +
+			ray_direction.y * (ray_origin.y - centre.y) +
+			ray_direction.z * (ray_origin.z - centre.z));
+		double c = pow(ray_origin.x - centre.x, 2) + pow(ray_origin.y - centre.y, 2) +
+			pow(ray_origin.z - centre.z, 2) - pow(radius, 2);
+
+		double discriminant = pow(b, 2) - 4 * a * c;
+
+		if (discriminant < 0) {
+			return -1;
+		}
+		else {
+			double first_root = (-b + sqrt(discriminant)) / (2 * a);
+			double second_root = (-b - sqrt(discriminant)) / (2 * a);
+
+
+			if (second_root >= 0) {
+				return second_root;
+			}
+			if (first_root >= 0) {
+				return first_root;
+			}
+			return -1;
+		}
 	}
 };
