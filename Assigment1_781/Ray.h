@@ -7,7 +7,7 @@ public:
 	
 	Vec origin, direction;
 
-	Ray(Vec origin, Vec direction):origin(origin),direction(direction){}
+	Ray(Vec origin, Vec direction):origin(origin),direction(direction.normalize()){}
 
 	Ray(const Ray& r):origin(r.origin),direction(r.direction){}
 

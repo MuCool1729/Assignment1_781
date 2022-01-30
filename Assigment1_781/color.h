@@ -1,15 +1,17 @@
 #pragma once
 
+#include <iostream>
+
 class Color {
 
 public:
 	double red, green, blue, alpha;
 
-	Color(double x, double y, double z,double u) :red(x), green(y), blue(z),alpha(u) {}
+	Color(double x, double y, double z, double u) :red(x), green(y), blue(z), alpha(u) {}
 
-	Color() :red(1.0), green(0.0), blue(0.0),alpha(1.0) {}
+	Color() :red(1.0), green(0.0), blue(0.0), alpha(1.0) {}
 
-	Color(const Color& v) :red(v.red), green(v.green), blue(v.blue) ,alpha(v.alpha) {}
+	Color(const Color& v) :red(v.red), green(v.green), blue(v.blue), alpha(v.alpha) {}
 
 	Color operator +(Color const& obj) {
 		Color res;
@@ -59,12 +61,17 @@ public:
 	}
 
 	void clip() {
-		if (red > 1)  red = 1; 
-		if (green > 1)  green = 1; 
-		if (blue > 1)  blue = 1; 
-		if (red < 0)  red = 0; 
-		if (green < 0)  green = 0; 
-		if (blue < 0)  blue = 0; 
+		if (red > 1)  red = 1;
+		if (green > 1)  green = 1;
+		if (blue > 1)  blue = 1;
+		if (red < 0)  red = 0;
+		if (green < 0)  green = 0;
+		if (blue < 0)  blue = 0;
+	}
+
+	friend std::ostream& operator << (std::ostream& os, const Color& c) {
+		os << "rgba: " << c.red << " " << c.blue << " " << c.green << " " << c.alpha << "\n";
+		return os;
 	}
 };
 

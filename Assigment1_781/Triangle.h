@@ -8,20 +8,44 @@ class Triangle : public Object
 
 public:
 	Vec A, B, C, normal;
-	Color color;
-	Triangle(Vec A1, Vec B1, Vec C1, Color col) : A(A1), B(B1), C(C1), color(col)
+	
+	Triangle(Vec A1, Vec B1, Vec C1, Color col) : A(A1), B(B1), C(C1)
 	{
+		this->color = color;
 		Vec f = C - B;
 		Vec s = A - B;
 		normal = f.cross(s).normalize();
 	}
-	Triangle(Vec A1, Vec B1, Vec C1) : A(A1), B(B1), C(C1), color()
+	
+	Triangle(Vec A1, Vec B1, Vec C1) : A(A1), B(B1), C(C1)
 	{
+		this->color = Color(1.0, 1.0, 1.0, 1.0);
 		Vec f = C - B;
 		Vec s = A - B;
 		normal = f.cross(s).normalize();
 	}
-	double findIntersection(Ray ray)
+
+	bool isInside(Vec point) {
+		double area1 = ((point - B).cross(C - B)).magnitude();
+		double area2 = ((point - C).cross(A - C)).magnitude();
+		double area3 = ((point - A).cross(B - A)).magnitude();
+		double total = ((A - B).cross(C - B)).magnitude();
+
+		return (abs(total - area1 - area2 - area3) <= 0.001);
+	}
+
+	Vec getNormalAt(Vec intersection_point) override {
+		if (isInside(intersection_point)) {
+			return normal;
+		}
+		return Vec(0, 0, 0);
+	}
+
+	Color getColor() override {
+		return color;
+	}
+
+	double findIntersection(Ray ray) override
 	{
 		Vec ray_direction = ray.direction;
 		Vec ray_origin = ray.origin;
@@ -44,12 +68,8 @@ public:
 			double t = -(unormal.dot(ray_origin) + dist) / unormal.dot(ray_direction);
 
 			Vec point = ray_origin + ray_direction * t;
-			double area1 = ((point - B).cross(C - B)).magnitude();
-			double area2 = ((point - C).cross(A - C)).magnitude();
-			double area3 = ((point - A).cross(B - A)).magnitude();
-			double total = ((A - B).cross(C - B)).magnitude();
-
-			if (abs(total - area1 - area2 - area3) <= 0.001 && t >= 0) {
+			
+			if (isInside(point) && t >= 0) {
 				return (point - ray_origin).magnitude();
 			}
 			return -1;

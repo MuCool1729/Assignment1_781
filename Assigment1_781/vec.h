@@ -2,8 +2,6 @@
 
 #include "math.h"
 #include <iostream>
-#include <ostream>
-#include <ostream>
 
 class Vec {
 public:
