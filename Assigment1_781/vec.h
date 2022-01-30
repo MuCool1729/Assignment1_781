@@ -80,11 +80,20 @@ public:
 		res.z = z - obj.z;
 		return res;
 	}
-	Vec operator *(double const& obj) {
+
+	Vec operator *(Vec const& obj) {
 		Vec res;
-		res.x = x * obj;
-		res.y = y * obj;
-		res.z = z * obj;
+		res.x = x * obj.x;
+		res.y = y * obj.y;
+		res.z = z * obj.z;
+		return res;
+	}
+
+	Vec operator *(double const& d) {
+		Vec res;
+		res.x = x * d;
+		res.y = y * d;
+		res.z = z * d;
 		return res;
 	}
 
@@ -101,6 +110,10 @@ public:
 		ans += (y * obj.y);
 		ans += (z * obj.z);
 		return ans;
+	}
+
+	double Sum() {
+		return (x + y + z);
 	}
 	
 	friend std::ostream& operator << (std::ostream & os, const Vec & v){

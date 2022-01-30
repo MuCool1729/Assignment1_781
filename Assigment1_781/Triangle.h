@@ -1,4 +1,3 @@
-
 #include "math.h"
 #include "Object.h"
 #include "Vec.h"
@@ -27,7 +26,7 @@ public:
 		Vec ray_direction = ray.direction;
 		Vec ray_origin = ray.origin;
 		double a = ray_direction.dot(normal);
-		if (a ==0)
+		if (a == 0)
 		{
 			return -1;
 		}
@@ -35,26 +34,22 @@ public:
 		{
 			Vec origin(0, 0, 0);
 			double dist = (B - origin).dot(normal);
-			//dist = abs(dist);
-			double t = -(normal.dot(ray_origin) + dist) / normal.dot(ray_direction);
+
+			Vec unormal = normal;
+
+			if (((A * normal * -1).Sum() + dist) == 0) {
+				unormal *= -1;
+			}
+
+			double t = -(unormal.dot(ray_origin) + dist) / unormal.dot(ray_direction);
 
 			Vec point = ray_origin + ray_direction * t;
 			double area1 = ((point - B).cross(C - B)).magnitude();
 			double area2 = ((point - C).cross(A - C)).magnitude();
 			double area3 = ((point - A).cross(B - A)).magnitude();
 			double total = ((A - B).cross(C - B)).magnitude();
-			if (abs(total - area1 - area2 - area3) <= 0.001) {
-				return (point - ray_origin).magnitude();
-			}
-			
-			t = -(normal.dot(ray_origin*-1) + dist) / normal.dot(ray_direction*-1);
-			point = ray_origin + ray_direction * t;
-			area1 = ((point - B).cross(C - B)).magnitude();
-			area2 = ((point - C).cross(A - C)).magnitude();
-			area3 = ((point - A).cross(B - A)).magnitude();
-			total = ((A - B).cross(C - B)).magnitude();
 
-			if (abs(total - area1 - area2 - area3) <= 0.001) {
+			if (abs(total - area1 - area2 - area3) <= 0.001 && t >= 0) {
 				return (point - ray_origin).magnitude();
 			}
 			return -1;
