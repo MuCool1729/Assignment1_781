@@ -9,7 +9,7 @@ public:
 
 	Color(double x, double y, double z, double u) :red(x), green(y), blue(z), alpha(u) {}
 
-	Color() :red(1.0), green(0.0), blue(0.0), alpha(1.0) {}
+	Color() :red(0.0), green(0.0), blue(0.0), alpha(1.0) {}
 
 	Color(const Color& v) :red(v.red), green(v.green), blue(v.blue), alpha(v.alpha) {}
 

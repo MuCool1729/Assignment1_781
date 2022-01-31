@@ -1,13 +1,11 @@
 #include <iostream>
-#include "Box.h"
+#include "Engine.h"
 
 int main() {
 
-	Ray ray(Vec(0, 1, 0), Vec(1, 0, 0));
+	Ray r = getRefracted(Ray(Vec(1, 1, 0), Vec(-1, -1, 0)), Vec(0, -1, 0), Vec(0, 0, 0), 1, sqrt(2));
 
-	Box bx(Vec(3, 0, 0), 3, 3, 3, Vec(1, 0, 0), Vec(0, 1, 0));
-
-	std::cout << bx.findIntersection(ray) << "\n";
+	std::cout << r.origin << "\ndirection: " << r.direction << "\n";
 
 	return 0;
 }

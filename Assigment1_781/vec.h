@@ -95,6 +95,10 @@ public:
 		return res;
 	}
 
+	bool operator ==(Vec const& obj) {
+		return (x == obj.x && y == obj.y && z == obj.z);
+	}
+
 	Vec cross(Vec const& obj) {
 		Vec res;
 		res.x = y * obj.z - z * obj.y;
