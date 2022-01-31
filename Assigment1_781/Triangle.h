@@ -1,3 +1,5 @@
+#pragma once
+
 #include "math.h"
 #include "Object.h"
 #include "Vec.h"
@@ -69,7 +71,7 @@ public:
 
 			Vec point = ray_origin + ray_direction * t;
 			
-			if (isInside(point) && t >= 0) {
+			if (isInside(point) && t > 0) {
 				return (point - ray_origin).magnitude();
 			}
 			return -1;

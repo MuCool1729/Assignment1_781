@@ -1,16 +1,13 @@
 #include <iostream>
-#include "vec.h"
-#include "Triangle.h"
-#include "Sphere.h"
+#include "Box.h"
 
 int main() {
 
-	Vec centre(2, 0, 0);
-	Ray ray(Vec(0, 1, 0), Vec(-1, 0, 0));
+	Ray ray(Vec(0, 1, 0), Vec(1, 0, 0));
 
-	Sphere s(centre, 1.0);
+	Box bx(Vec(3, 0, 0), 1, 1, 1, Vec(1, 0, 0), Vec(0, 1, 0));
 
-	std::cout << s.findIntersection(ray) << "\n";
+	std::cout << bx.findIntersection(ray) << "\n";
 
 	return 0;
 }
