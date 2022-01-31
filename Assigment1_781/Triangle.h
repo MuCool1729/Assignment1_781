@@ -10,18 +10,35 @@ class Triangle : public Object
 
 public:
 	Vec A, B, C, normal;
-	
-	Triangle(Vec A1, Vec B1, Vec C1, Color col) : A(A1), B(B1), C(C1)
-	{
-		this->color = color;
+
+	Triangle() :A(1, 0, 0), B(0, 1, 0), C(0, 0, 1) {
 		Vec f = C - B;
 		Vec s = A - B;
 		normal = f.cross(s).normalize();
 	}
-	
+
+	Triangle(Vec A1, Vec B1, Vec C1, Color col) : A(A1), B(B1), C(C1)
+	{
+		this->color = color;
+		this->material = Material();
+		Vec f = C - B;
+		Vec s = A - B;
+		normal = f.cross(s).normalize();
+	}
+
 	Triangle(Vec A1, Vec B1, Vec C1) : A(A1), B(B1), C(C1)
 	{
 		this->color = Color(1.0, 1.0, 1.0, 1.0);
+		this->material = Material();
+		Vec f = C - B;
+		Vec s = A - B;
+		normal = f.cross(s).normalize();
+	}
+
+	Triangle(Vec A1, Vec B1, Vec C1, Color col, Material material) : A(A1), B(B1), C(C1)
+	{
+		this->color = color;
+		this->material = material;
 		Vec f = C - B;
 		Vec s = A - B;
 		normal = f.cross(s).normalize();
@@ -70,7 +87,7 @@ public:
 			double t = -(unormal.dot(ray_origin) + dist) / unormal.dot(ray_direction);
 
 			Vec point = ray_origin + ray_direction * t;
-			
+
 			if (isInside(point) && t > 0) {
 				return (point - ray_origin).magnitude();
 			}

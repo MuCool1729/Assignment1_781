@@ -13,18 +13,28 @@ public:
 
 	Box() :centre(0, 0, 0), l(1), b(1), h(1), vx(1, 0, 0), vy(0, 1, 0) {
 		this->color = Color(1.0, 1.0, 1.0, 1.0);
+		this->material = Material();
 		vz = Vec(0, 0, 1);
 		addFaces();
 	}
 
 	Box(Vec centre, double l, double b, double h, Vec vx, Vec vy) : centre(centre), l(l), b(b), h(h), vx(vx.normalize()), vy(vy.normalize()) {
 		this->color = Color(1.0, 1.0, 1.0, 1.0);
+		this->material = Material();
 		vz = vx.cross(vy).normalize();
 		addFaces();
 	}
 
 	Box(Vec centre, double l, double b, double h, Vec vx, Vec vy, Color color) : centre(centre), l(l), b(b), h(h), vx(vx.normalize()), vy(vy.normalize()) {
 		this->color = color;
+		this->material = Material();
+		vz = vx.cross(vy).normalize();
+		addFaces();
+	}
+
+	Box(Vec centre, double l, double b, double h, Vec vx, Vec vy, Color color, Material material) : centre(centre), l(l), b(b), h(h), vx(vx.normalize()), vy(vy.normalize()) {
+		this->color = color;
+		this->material = material;
 		vz = vx.cross(vy).normalize();
 		addFaces();
 	}

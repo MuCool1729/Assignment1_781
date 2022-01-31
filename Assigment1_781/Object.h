@@ -3,10 +3,14 @@
 #include "Ray.h"
 #include "Vec.h"
 #include "Color.h"
+#include "Material.h"
 
 class Object {
 public:
+
 	Color color;
+	Material material;
+
 	Object(Color color):color(color) {}
 
 	Object() {

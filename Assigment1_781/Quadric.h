@@ -10,16 +10,25 @@ public:
 
 	Quadric() :A(0), B(0), C(0), D(0), E(0), F(0), G(0), H(0), I(0), J(0) {
 		this->color = Color(1.0, 1.0, 1.0, 1.0);
+		this->material = Material();
 	}
 
 	Quadric(double a, double b, double c, double d, double e, double f, double g, double h, double i, double j) :
 		A(a), B(b), C(c), D(d), E(e), F(f), G(g), H(h), I(i), J(j) {
 		this->color = Color(1.0, 1.0, 1.0, 1.0);
+		this->material = Material();
 	}
 
 	Quadric(double a, double b, double c, double d, double e, double f, double g, double h, double i, double j, Color color) :
 		A(a), B(b), C(c), D(d), E(e), F(f), G(g), H(h), I(i), J(j) {
 		this->color = color;
+		this->material = Material();
+	}
+
+	Quadric(double a, double b, double c, double d, double e, double f, double g, double h, double i, double j, Color color, Material material) :
+		A(a), B(b), C(c), D(d), E(e), F(f), G(g), H(h), I(i), J(j) {
+		this->color = color;
+		this->material = material;
 	}
 
 	// Q(x,y,z) = Ax2 + By2 + Cz2 + Dxy+ Exz + Fyz + Gx + Hy + Iz + J 

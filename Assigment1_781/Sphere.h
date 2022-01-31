@@ -13,14 +13,22 @@ public:
 
 	Sphere() :centre(0.0, 0.0, 0.0), radius(1.0) {
 		this->color = Color(1.0, 1.0, 1.0, 1.0);
+		this->material = Material();
 	}
 
 	Sphere(Vec centre, double radius, Color color) :centre(centre), radius(radius) {
 		this->color = color;
+		this->material = Material();
 	}
 
 	Sphere(Vec centre, double radius) :centre(centre), radius(radius) {
 		this->color = Color(1.0, 1.0, 1.0, 1.0);
+		this->material = Material(); 
+	}
+
+	Sphere(Vec centre, double radius, Color color, Material material) :centre(centre), radius(radius) {
+		this->color = color;
+		this->material = material;
 	}
 
 	bool isOnSurface(Vec point) {
