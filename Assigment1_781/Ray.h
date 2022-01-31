@@ -4,11 +4,13 @@
 
 class Ray {
 public:
-	
+
 	Vec origin, direction;
 
-	Ray(Vec origin, Vec direction):origin(origin),direction(direction.normalize()){}
+	Ray() :origin(0, 0, 0), direction(0, 0, 0) {}
 
-	Ray(const Ray& r):origin(r.origin),direction(r.direction){}
+	Ray(Vec origin, Vec direction) :origin(origin), direction(direction.normalize()) {}
+
+	Ray(const Ray& r) :origin(r.origin), direction(r.direction) {}
 
 };

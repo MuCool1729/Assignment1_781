@@ -20,10 +20,10 @@ Vec camera_position, camera_lookat;
 
 Vec origin(0, 0, 0);
 Vec world_up(0, 1, 0);
-std::vector<Object> models;
+std::vector<Object *> models;
 std::vector<Light> lights;
 const double accuracy = 0.0001;
-const int MAX_DEPTH = 4;
+const int MAX_DEPTH = 3;
 
 Ray getReflected(Ray incident, Vec normal, Vec intersection_point) {
 
@@ -61,7 +61,49 @@ double get_random_double() {
 	return dist(generator);
 }
 
-Color traceRay(Ray r, double ambient_light, double refractive_index, int depth) {
+Color phongModel(Vec intersection_point, Vec viewing_direction, Vec normal, std::vector<Light> interfering_lights,
+	Color ambient_light, Color reflected_color, Color refracted_color, Material model_material) {
+
+	if (viewing_direction.dot(normal) < 0) {
+		normal = normal * -1;
+	}
+
+	normal = normal.normalize();
+
+	Color ret(0, 0, 0, 1);
+
+	for (int i = 0; i < interfering_lights.size(); i++)
+	{
+		Color light_color = interfering_lights[i].color;
+		Vec incident_ray = interfering_lights[i].pos - intersection_point;
+
+		double cos_theta = incident_ray.normalize().dot(normal);
+		if (cos_theta < 0) {
+			continue;
+		}
+
+		Vec reflected_ray = normal * 2 * cos_theta - incident_ray;
+
+		ret += light_color * model_material.Kd * cos_theta;
+
+		double cos_alpha = reflected_ray.normalize().dot(viewing_direction.normalize());
+		if (cos_alpha > 0) {
+			ret += light_color * model_material.Ks * pow(cos_alpha, model_material.specular_exponent);
+		}
+	}
+
+	ret += ambient_light * model_material.Ka;
+
+	ret += reflected_color * model_material.Krg;
+
+	ret += refracted_color * model_material.Ktg;
+
+	ret.clip();
+
+	return ret;
+}
+
+Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 
 	// Closest
 
@@ -70,7 +112,7 @@ Color traceRay(Ray r, double ambient_light, double refractive_index, int depth) 
 
 	for (int i = 0; i < models.size(); i++)
 	{
-		intersection_distance.push_back(models[i].findIntersection(r));
+		intersection_distance.push_back(models[i]->findIntersection(r));
 		if (intersection_distance[i] > accuracy) 
 		{
 			if (closest_index == -1) 
@@ -91,7 +133,7 @@ Color traceRay(Ray r, double ambient_light, double refractive_index, int depth) 
 	// Normal
 
 	Vec intersection_point = r.origin + r.direction.normalize() * intersection_distance[closest_index];
-	Vec normal = models[closest_index].getNormalAt(intersection_point);
+	Vec normal = models[closest_index]->getNormalAt(intersection_point);
 
 	if (normal == Vec(0, 0, 0)) {
 		return Color(0, 0, 0, 1);
@@ -111,7 +153,7 @@ Color traceRay(Ray r, double ambient_light, double refractive_index, int depth) 
 
 		for (int j = 0; j < models.size(); j++)
 		{
-			double dist = models[j].findIntersection(shadow_ray);
+			double dist = models[j]->findIntersection(shadow_ray);
 			if (dist < shadow_ray_length) {
 				is_shadowed = true;
 			}
@@ -124,11 +166,40 @@ Color traceRay(Ray r, double ambient_light, double refractive_index, int depth) 
 
 	// Reflections and Refractions
 
+	Color reflected_color(0, 0, 0, 1), refracted_color(0, 0, 0, 1);
+
+	if (depth < MAX_DEPTH) {
+
+		Ray reflected_ray = getReflected(r, normal, intersection_point);
+
+		reflected_color = traceRay(reflected_ray, ambient_light, refractive_index, depth + 1);
+
+		double model_ri = models[closest_index]->material.refractive_index;
+
+		if (model_ri > 0) {
+			Ray refracted_ray;
+			if (refractive_index == model_ri) {
+				refracted_ray = getRefracted(r, normal, intersection_point, model_ri, 1);
+				refracted_color = traceRay(refracted_ray, ambient_light, 1, depth + 1);
+			}
+			else {
+				refracted_ray = getRefracted(r, normal, intersection_point, refractive_index, model_ri);
+				refracted_color = traceRay(refracted_ray, ambient_light, model_ri, depth + 1);
+			}
+		}
+	}
+
 	// Phong model
 
+	Color final_color = phongModel(intersection_point, r.direction * -1, normal, interfering_lights, ambient_light,
+		reflected_color, refracted_color, models[closest_index]->material);
+
+	final_color.clip();
+
+	return final_color;
 }
 
-std::vector<std::vector<Color>> getImageMat(int width, int height, double ambient_light, int num_samples = 16) {
+std::vector<std::vector<Color>> getImageMat(int width, int height, Color ambient_light, int num_samples = 4) {
 
 	Vec cam_pos(camera_position);
 	Vec look_at(camera_lookat);
@@ -158,8 +229,10 @@ std::vector<std::vector<Color>> getImageMat(int width, int height, double ambien
 
 				Ray r(cam_pos, lower_left_corner + camera_right * u * width + camera_up * v * height - cam_pos);
 
-				Color ret_color = traceRay(r, ambient_light, 1, 3);
+				Color ret_color = traceRay(r, ambient_light, 1, 0);
 				color += ret_color;
+
+				std::cout << i << " " << j << " " << k << "\n";
 			}
 
 			color = color * (1 / num_samples);
