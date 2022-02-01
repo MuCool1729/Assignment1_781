@@ -6,7 +6,7 @@
 int main() {
 
 	Vec centre(5, 0, 0);
-	double radius = 2;	
+	double radius = 3;	
 	Color scolor(0.2, 0.8, 0.5, 1.0);
 	Material smaterial(0.5, 0.2, 0.3, -1, 3, 0.2, 0.2);
 
@@ -18,24 +18,16 @@ int main() {
 
 	lights.push_back(l1);
 
-	camera_position = Vec(0, 0, 0);
+	camera_position = Vec(-15, 0, 0);
 	camera_lookat = Vec(1, 0, 0);
 
-	std::vector<std::vector<Color>> image = getImageMat(200, 150, Color(1, 1, 1, 0.3));
+	std::vector<std::vector<Color>> image = getImageMat(10, 10, Color(1, 1, 1, 0.3));
 
-	for (int i = 0; i < 200; i++)
+	for (int i = 0; i < 10; i++)
 	{
-		for (int j = 0; j < 150; j++)
+		for (int j = 0; j < 10; j++)
 		{
-			double r, b, g;
-
-			r = image[i][j].red;
-			b = image[i][j].blue;
-			g = image[i][j].green;
-
-			if (r + b + g > 0) {
-				std::cout << "<" << i + 1 << ", " << j + 1 << "> " << image[i][j] << "\n";
-			}
+			std::cout << "<" << i + 1 << ", " << j + 1 << "> " << image[i][j] << "\n";
 		}
 	}
 

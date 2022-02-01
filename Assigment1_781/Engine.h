@@ -20,7 +20,7 @@ Vec camera_position, camera_lookat;
 
 Vec origin(0, 0, 0);
 Vec world_up(0, 1, 0);
-std::vector<Object *> models;
+std::vector<Object*> models;
 std::vector<Light> lights;
 const double accuracy = 0.0001;
 const int MAX_DEPTH = 3;
@@ -56,8 +56,9 @@ Ray getRefracted(Ray incident, Vec normal, Vec intersection_point, double incide
 }
 
 double get_random_double() {
+	std::random_device rd;
 	std::uniform_real_distribution<double> dist(0.0, 1.0);
-	std::mt19937 generator;
+	std::mt19937 generator(rd());
 	return dist(generator);
 }
 
@@ -92,13 +93,19 @@ Color phongModel(Vec intersection_point, Vec viewing_direction, Vec normal, std:
 		}
 	}
 
+	std::cout << "After checking interfering lights, color is " << ret << "\n";
+
 	ret += ambient_light * model_material.Ka;
 
 	ret += reflected_color * model_material.Krg;
 
 	ret += refracted_color * model_material.Ktg;
 
+	std::cout << "After checking on reflected, refracted and ambient final color is " << ret << "\n";
+
 	ret.clip();
+
+	std::cout << "Color after clipping is " << ret << "\n";
 
 	return ret;
 }
@@ -113,13 +120,13 @@ Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 	for (int i = 0; i < models.size(); i++)
 	{
 		intersection_distance.push_back(models[i]->findIntersection(r));
-		if (intersection_distance[i] > accuracy) 
+		if (intersection_distance[i] > accuracy)
 		{
-			if (closest_index == -1) 
+			if (closest_index == -1)
 			{
 				closest_index = i;
 			}
-			else if (intersection_distance[closest_index] > intersection_distance[i]) 
+			else if (intersection_distance[closest_index] > intersection_distance[i])
 			{
 				closest_index = i;
 			}
@@ -127,6 +134,7 @@ Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 	}
 
 	if (closest_index == -1) {
+		std::cout << "Not intersecting\n";
 		return Color(0, 0, 0, 1);
 	}
 
@@ -136,6 +144,7 @@ Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 	Vec normal = models[closest_index]->getNormalAt(intersection_point);
 
 	if (normal == Vec(0, 0, 0)) {
+		std::cout << "Normal returned 0\n";
 		return Color(0, 0, 0, 1);
 	}
 
@@ -154,7 +163,7 @@ Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 		for (int j = 0; j < models.size(); j++)
 		{
 			double dist = models[j]->findIntersection(shadow_ray);
-			if (dist < shadow_ray_length) {
+			if (dist < shadow_ray_length && dist > accuracy) {
 				is_shadowed = true;
 			}
 		}
@@ -164,6 +173,8 @@ Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 		}
 	}
 
+	std::cout << "Total interfering lights are " << interfering_lights.size() << "\n";
+
 	// Reflections and Refractions
 
 	Color reflected_color(0, 0, 0, 1), refracted_color(0, 0, 0, 1);
@@ -171,6 +182,8 @@ Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 	if (depth < MAX_DEPTH) {
 
 		Ray reflected_ray = getReflected(r, normal, intersection_point);
+
+		std::cout << "Reflection with depth " << depth << "\n";
 
 		reflected_color = traceRay(reflected_ray, ambient_light, refractive_index, depth + 1);
 
@@ -191,10 +204,12 @@ Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 
 	// Phong model
 
+	std::cout << "Calling Phong: \n";
+
 	Color final_color = phongModel(intersection_point, r.direction * -1, normal, interfering_lights, ambient_light,
 		reflected_color, refracted_color, models[closest_index]->material);
 
-	final_color.clip();
+	std::cout << "Phong completed with: " << final_color << "\n";
 
 	return final_color;
 }
@@ -204,7 +219,7 @@ std::vector<std::vector<Color>> getImageMat(int width, int height, Color ambient
 	Vec cam_pos(camera_position);
 	Vec look_at(camera_lookat);
 
-	Vec a = (cam_pos - look_at).normalize();
+	Vec a = (cam_pos - look_at);
 	Vec camera_direction = (a * -1).normalize();
 	Vec camera_right = world_up.cross(a).normalize();
 	Vec camera_up = a.cross(camera_right).normalize();
@@ -232,11 +247,12 @@ std::vector<std::vector<Color>> getImageMat(int width, int height, Color ambient
 				Color ret_color = traceRay(r, ambient_light, 1, 0);
 				color += ret_color;
 
-				std::cout << i << " " << j << " " << k << "\n";
+				std::cout << i << " " << j << " " << k << ": " << ret_color << "\n";
 			}
 
-			color = color * (1 / num_samples);
+			color = color * (1 / (double)num_samples);
 			ret[i][j] = color;
+			std::cout << "Final color at [i,j] is " << ret[i][j] << "\n\n";
 		}
 	}
 
