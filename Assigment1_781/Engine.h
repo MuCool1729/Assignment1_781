@@ -93,7 +93,7 @@ Color phongModel(Vec intersection_point, Vec viewing_direction, Vec normal, std:
 		}
 	}
 
-	std::cout << "After checking interfering lights, color is " << ret << "\n";
+	//std::cout << "After checking interfering lights, color is " << ret << "\n";
 
 	ret += ambient_light * model_material.Ka;
 
@@ -101,11 +101,11 @@ Color phongModel(Vec intersection_point, Vec viewing_direction, Vec normal, std:
 
 	ret += refracted_color * model_material.Ktg;
 
-	std::cout << "After checking on reflected, refracted and ambient final color is " << ret << "\n";
+	//std::cout << "After checking on reflected, refracted and ambient final color is " << ret << "\n";
 
 	ret.clip();
 
-	std::cout << "Color after clipping is " << ret << "\n";
+	//std::cout << "Color after clipping is " << ret << "\n";
 
 	return ret;
 }
@@ -120,6 +120,7 @@ Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 	for (int i = 0; i < models.size(); i++)
 	{
 		intersection_distance.push_back(models[i]->findIntersection(r));
+		//std::cout << "Intersection distance is " << intersection_distance[i] << "\n";
 		if (intersection_distance[i] > accuracy)
 		{
 			if (closest_index == -1)
@@ -134,7 +135,7 @@ Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 	}
 
 	if (closest_index == -1) {
-		std::cout << "Not intersecting\n";
+		//std::cout << "Not intersecting\n";
 		return Color(0, 0, 0, 1);
 	}
 
@@ -144,7 +145,7 @@ Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 	Vec normal = models[closest_index]->getNormalAt(intersection_point);
 
 	if (normal == Vec(0, 0, 0)) {
-		std::cout << "Normal returned 0\n";
+		//std::cout << "Normal returned 0\n";
 		return Color(0, 0, 0, 1);
 	}
 
@@ -173,7 +174,7 @@ Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 		}
 	}
 
-	std::cout << "Total interfering lights are " << interfering_lights.size() << "\n";
+	//std::cout << "Total interfering lights are " << interfering_lights.size() << "\n";
 
 	// Reflections and Refractions
 
@@ -183,7 +184,7 @@ Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 
 		Ray reflected_ray = getReflected(r, normal, intersection_point);
 
-		std::cout << "Reflection with depth " << depth << "\n";
+		//std::cout << "Reflection with depth " << depth << "\n";
 
 		reflected_color = traceRay(reflected_ray, ambient_light, refractive_index, depth + 1);
 
@@ -204,12 +205,18 @@ Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 
 	// Phong model
 
-	std::cout << "Calling Phong: \n";
+	//std::cout << "Calling Phong: \n";
 
 	Color final_color = phongModel(intersection_point, r.direction * -1, normal, interfering_lights, ambient_light,
 		reflected_color, refracted_color, models[closest_index]->material);
 
-	std::cout << "Phong completed with: " << final_color << "\n";
+	//std::cout << "Phong completed with: " << final_color << "\n";
+
+	final_color = final_color * models[closest_index]->color;
+
+	final_color.clip();
+
+	//std::cout << "Final color is " << final_color << "\n";
 
 	return final_color;
 }
@@ -235,8 +242,8 @@ std::vector<std::vector<Color>> getImageMat(int width, int height, Color ambient
 			Color color(0, 0, 0, 1);
 			for (int k = 0; k < num_samples; ++k)
 			{
-				double u = (i + get_random_double()) / (width);
-				double v = (j + get_random_double()) / (height);
+				double u = (i + get_random_double()) / (width - 1);
+				double v = (j + get_random_double()) / (height - 1);
 				// ray(origin, lower_left_corner + u*horizontal + v*vertical - origin);
 				//origin = lookfrom;
 				//horizontal = viewport_width * u(camera right);
@@ -247,12 +254,12 @@ std::vector<std::vector<Color>> getImageMat(int width, int height, Color ambient
 				Color ret_color = traceRay(r, ambient_light, 1, 0);
 				color += ret_color;
 
-				std::cout << i << " " << j << " " << k << ": " << ret_color << "\n";
+				//std::cout << i << " " << j << " " << k << ": " << ret_color << "\n";
 			}
 
 			color = color * (1 / (double)num_samples);
 			ret[i][j] = color;
-			std::cout << "Final color at [i,j] is " << ret[i][j] << "\n\n";
+			//std::cout << "Final color at [" << i << ", " << j << "] is " << ret[i][j] << "\n";
 		}
 	}
 
