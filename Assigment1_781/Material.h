@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 class Material {
 public:
 
@@ -11,5 +13,11 @@ public:
 	Material(double Ka, double Kd, double Ks, double refractive_index,int specular_exponent, double Krg, double Ktg)
 		:Ka(Ka),Kd(Kd),Ks(Ks),refractive_index(refractive_index), specular_exponent(specular_exponent), Krg(Krg), Ktg(Ktg)
 	{}
+
+	friend std::ostream& operator << (std::ostream& os, const Material& m) {
+		os << "Ka: " << m.Ka << "\nKd: " << m.Kd << "\nKs: " << m.Ks << "\nrefractive index: " << m.refractive_index;
+		os << "\nspecular exponent: " << m.specular_exponent << "\nKrg: " << m.Krg << "\nKtg: " << m.Ktg;
+		return os;
+	}
 
 };

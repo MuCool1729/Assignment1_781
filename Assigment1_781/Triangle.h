@@ -19,7 +19,7 @@ public:
 
 	Triangle(Vec A1, Vec B1, Vec C1, Color col) : A(A1), B(B1), C(C1)
 	{
-		this->color = color;
+		this->color = col;
 		this->material = Material();
 		Vec f = C - B;
 		Vec s = A - B;
