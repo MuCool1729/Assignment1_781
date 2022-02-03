@@ -7,7 +7,7 @@ class Color {
 public:
 	double red, green, blue, alpha;
 
-	Color(double x, double y, double z, double u) :red(x), green(y), blue(z), alpha(u) {}
+	Color(double red, double green, double blue, double alpha) :red(x), green(y), blue(z), alpha(u) {}
 
 	Color() :red(0.0), green(0.0), blue(0.0), alpha(1.0) {}
 

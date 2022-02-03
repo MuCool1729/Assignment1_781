@@ -1,36 +1,34 @@
 #include <iostream>
+
 #define STBI_MSC_SECURE_CRT
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
+
 #include "Engine.h"
+#include <fstream>
+#include <json.hpp>
+
+using json = nlohmann::json;
 
 int main() {
 
-	Vec centre(45, 0, 0);
-	double radius = 42;	
-	Color scolor(1, 0, 0, 1.0);
-	Material smaterial(0.5, 0.4, 0, -1, 4, 0, 0);
+	std::ifstream input_file("B:/IITD/Sem8/COL781/Assignment 1/input/input.json");
 
-	Sphere* sphere = new Sphere(centre, radius, scolor, smaterial);
+	json j_if = json::parse(input_file);
 
-	Vec centre2(100, 200, 100);
-	double radius2 = 42;
-	Color scolor2(0, 1, 0, 1.0);
-	Material smaterial2(0.6, 0.8, 0, -1, 8, 0, 0);
+	int width = (int)j_if["width"];
+	int height = (int)j_if["height"];
 
-	Sphere* sphere2 = new Sphere(centre2, radius2, scolor2, smaterial2);
+	Color ambient_light = Color((double)j_if["ambient_light"][0], (double)j_if["ambient_light"][1],
+		(double)j_if["ambient_light"][2], (double)j_if["ambient_light"][3]);
 
-	models.push_back(sphere);
-	models.push_back(sphere2);
+	camera_position = Vec((double)j_if["camera"]["position"][0], (double)j_if["camera"]["position"][1],
+		(double)j_if["camera"]["position"][2]);
 
-	Light l1(Vec(0, 2, 0), Color(1, 1, 1, 1));
-
-	lights.push_back(l1);
-
-	camera_position = Vec(-400, 200, 0);
-	camera_lookat = Vec(0, 200, 0);
-
-	int width = 800, height = 600;
+	camera_lookat = Vec((double)j_if["camera"]["look_at"][0], (double)j_if["camera"]["look_at"][1],
+		(double)j_if["camera"]["look_at"][2]);
+	
+	/*int width = 800, height = 600;
 
 	std::vector<std::vector<Color>> image = getImageMat(width, height, Color(1, 1, 1, 0.3));
 
@@ -48,7 +46,9 @@ int main() {
 		}
 	}
 
-	stbi_write_png("rendered10.png", width, height, 3, img, width * 3);
+	stbi_write_png("rendered10.png", width, height, 3, img, width * 3);*/
+
+
 
 	return 0;
 }

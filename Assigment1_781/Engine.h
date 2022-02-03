@@ -221,7 +221,7 @@ Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 	return final_color;
 }
 
-std::vector<std::vector<Color>> getImageMat(int width, int height, Color ambient_light, int num_samples = 4) {
+std::vector<std::vector<Color>> getImageMat(int width, int height, Color ambient_light, int num_samples = 16) {
 
 	Vec cam_pos(camera_position);
 	Vec look_at(camera_lookat);
@@ -259,7 +259,9 @@ std::vector<std::vector<Color>> getImageMat(int width, int height, Color ambient
 
 			color = color * (1 / (double)num_samples);
 			ret[i][j] = color;
-			//std::cout << "Final color at [" << i << ", " << j << "] is " << ret[i][j] << "\n";
+		}
+		if (i % 20 == 0) {
+			std::cout << "Completed " << i << std:: endl;
 		}
 	}
 
