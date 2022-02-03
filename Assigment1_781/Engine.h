@@ -38,22 +38,16 @@ void get_data(std::string filename, int& width, int& height, Color& ambient_ligh
 	width = (int)j_if["width"];
 	height = (int)j_if["height"];
 
-	std::cout << width << " x " << height << "\n";
-
 	camera_position = Vec((double)j_if["camera"]["position"][0], (double)j_if["camera"]["position"][1],
 		(double)j_if["camera"]["position"][2]);
-	std::cout << "Camera position: " << camera_position << "\n";
 
 	camera_lookat = Vec((double)j_if["camera"]["look_at"][0], (double)j_if["camera"]["look_at"][1],
 		(double)j_if["camera"]["look_at"][2]);
-	std::cout << "Camera look_out: " << camera_lookat << "\n";
 
 	for (auto& i : j_if["lights"].items()) {
 		Vec position((double)i.value()["position"][0], (double)i.value()["position"][1], (double)i.value()["position"][2]);
-		std::cout << "Light Position: " << position << std::endl;
 		Color light_color((double)i.value()["color"][0], (double)i.value()["color"][1],
 			(double)i.value()["color"][2], (double)i.value()["color"][3]);
-		std::cout << "Light Color: " << light_color << std::endl;
 
 		Light light(position, light_color);
 		lights.push_back(light);
@@ -61,56 +55,43 @@ void get_data(std::string filename, int& width, int& height, Color& ambient_ligh
 
 	ambient_light = Color((double)j_if["ambient_light"][0], (double)j_if["ambient_light"][1],
 		(double)j_if["ambient_light"][2], (double)j_if["ambient_light"][3]);
-	std::cout << "Ambient light: " << ambient_light << std::endl;
 
 	for (auto& i : j_if["scene"].items()) {
 		for (auto& j : i.value().items()) {
 			if (j.key() == "Triangle") {
-				std::cout << "Triangle\n";
 				Vec A((double)j.value()["A"][0], (double)j.value()["A"][1], (double)j.value()["A"][2]);
 				Vec B((double)j.value()["B"][0], (double)j.value()["B"][1], (double)j.value()["B"][2]);
 				Vec C((double)j.value()["C"][0], (double)j.value()["C"][1], (double)j.value()["C"][2]);
-				std::cout << "A: " << A << "\n";
-				std::cout << "B: " << B << "\n";
-				std::cout << "C: " << C << "\n";
 
 				Color color((double)j.value()["color"][0], (double)j.value()["color"][1],
 					(double)j.value()["color"][2], (double)j.value()["color"][3]);
-				std::cout << "Color: " << color << "\n";
 
 				Material material((double)j.value()["material"]["Ka"], (double)j.value()["material"]["Kd"],
 					(double)j.value()["material"]["Ks"], (double)j.value()["material"]["refractive_index"],
 					(int)j.value()["material"]["specular_exponent"], (double)j.value()["material"]["Krg"],
 					(double)j.value()["material"]["Ktg"]);
-				std::cout << "Material: \n" << material << "\n";
 
 				Triangle* t = new Triangle(A, B, C, color, material);
 				models.push_back(t);
 			}
 			if (j.key() == "Sphere") {
 
-				std::cout << "Sphere:\n";
 				Vec centre((double)j.value()["centre"][0], (double)j.value()["centre"][1], (double)j.value()["centre"][2]);
 				double radius = (double)j.value()["radius"];
-				std::cout << "Centre: " << centre << "\n";
-				std::cout << "Radius: " << radius << "\n";
 
 				Color color((double)j.value()["color"][0], (double)j.value()["color"][1],
 					(double)j.value()["color"][2], (double)j.value()["color"][3]);
-				std::cout << "Color: " << color << "\n";
 
 				Material material((double)j.value()["material"]["Ka"], (double)j.value()["material"]["Kd"],
 					(double)j.value()["material"]["Ks"], (double)j.value()["material"]["refractive_index"],
 					(int)j.value()["material"]["specular_exponent"], (double)j.value()["material"]["Krg"],
 					(double)j.value()["material"]["Ktg"]);
-				std::cout << "Material: \n" << material << "\n";
 
 				Sphere* s = new Sphere(centre, radius, color, material);
 				models.push_back(s);
 			}
 			if (j.key() == "Quadric") {
 
-				std::cout << "Quadric\n";
 				double A = j.value()["A"];
 				double B = j.value()["B"];
 				double C = j.value()["C"];
@@ -122,45 +103,33 @@ void get_data(std::string filename, int& width, int& height, Color& ambient_ligh
 				double I = j.value()["I"];
 				double J = j.value()["J"];
 
-				std::cout << "A: " << A << "\nB: " << B << "\nC:" << C << "\nD:" << D << "\nE:" << E;
-				std::cout << "\nF:" << F << "\nG: " << G << "\nH: " << H << "\nI: " << I << "\nJ:" << J << std::endl;
-
 				Color color((double)j.value()["color"][0], (double)j.value()["color"][1],
 					(double)j.value()["color"][2], (double)j.value()["color"][3]);
-				std::cout << "Color: " << color << "\n";
 
 				Material material((double)j.value()["material"]["Ka"], (double)j.value()["material"]["Kd"],
 					(double)j.value()["material"]["Ks"], (double)j.value()["material"]["refractive_index"],
 					(int)j.value()["material"]["specular_exponent"], (double)j.value()["material"]["Krg"],
 					(double)j.value()["material"]["Ktg"]);
-				std::cout << "Material: \n" << material << "\n";
 
 				Quadric* q = new Quadric(A, B, C, D, E, F, G, H, I, J, color, material);
 				models.push_back(q);
 			}
 			if (j.key() == "Box") {
 
-				std::cout << "Box\n";
 				Vec centre((double)j.value()["centre"][0], (double)j.value()["centre"][1], (double)j.value()["centre"][2]);
 				double l = (double)j.value()["l"];
 				double b = (double)j.value()["b"];
 				double h = (double)j.value()["h"];
 				Vec vx((double)j.value()["vx"][0], (double)j.value()["vx"][1], (double)j.value()["vx"][2]);
 				Vec vy((double)j.value()["vy"][0], (double)j.value()["vy"][1], (double)j.value()["vy"][2]);
-				std::cout << "centre: " << centre << "\n";
-				std::cout << "l x b x h: " << l << " x " << b << " x " << h << "\n";
-				std::cout << "vx: " << vx << std::endl;
-				std::cout << "vy: " << vy << std::endl;
 
 				Color color((double)j.value()["color"][0], (double)j.value()["color"][1],
 					(double)j.value()["color"][2], (double)j.value()["color"][3]);
-				std::cout << "Color: " << color << "\n";
 
 				Material material((double)j.value()["material"]["Ka"], (double)j.value()["material"]["Kd"],
 					(double)j.value()["material"]["Ks"], (double)j.value()["material"]["refractive_index"],
 					(int)j.value()["material"]["specular_exponent"], (double)j.value()["material"]["Krg"],
 					(double)j.value()["material"]["Ktg"]);
-				std::cout << "Material: \n" << material << "\n";
 
 				Box* bx = new Box(centre, l, b, h, vx, vy, color, material);
 				models.push_back(bx);

@@ -4,6 +4,8 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
+#include <GLFW/glfw3.h>
+
 #include "Engine.h"
 
 int main() {
@@ -32,6 +34,7 @@ int main() {
 
 	stbi_write_png("rendered10.png", width, height, 3, img, width * 3);*/
 
+	glfwInit();
 
 
 	return 0;
