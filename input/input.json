@@ -1,8 +1,8 @@
 {
     "height": 600,
     "width": 800,
-    "max_depth": 5,
-    "num_samples": 8,
+    "max_depth": 3,
+    "num_samples": 1,
     "camera": {
         "position": [
             -400,
@@ -45,35 +45,6 @@
         1
     ],
     "scene": [
-        {
-            "Quadric":{
-                "A": 1,
-                "B": 0,
-                "C": 1,
-                "D": 0,
-                "E": 0,
-                "F": 0,
-                "G": -800,
-                "H": 25,
-                "I": -700,
-                "J": 275000,
-                "color": [
-                    0,
-                    0.2,
-                    1,
-                    1
-                ],
-                "material": {
-                    "Ka": 0.1,
-                    "Kd": 0.4,
-                    "Ks": 0.5,
-                    "refractive_index": -1,
-                    "specular_exponent": 18,
-                    "Krg": 0.1,
-                    "Ktg": 0.3
-                }
-            }
-        },
         {
             "Sphere":{
                 "centre":[100,150,100],

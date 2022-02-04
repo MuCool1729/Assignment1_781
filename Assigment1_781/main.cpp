@@ -11,18 +11,18 @@
 int main(int argc, char** argv) {
 
 	// Take input from arguments
-	/*if (argc < 2) {
+	if (argc < 2) {
 		std::cerr << "Please provide an input file location.";
 		std::cerr << "\n Use: .\\a.exe <input_file_path>" << std::endl;
 		return -1;
 	}
 
-	std::string input_file_name = std::string(argv[1]);*/
+	std::string input_file_name = std::string(argv[1]);
 
 	// Get data
 	int width, height, num_samples;
 	Color ambient_color;
-	get_data("../input/input_standard.json", width, height, ambient_color, num_samples);
+	get_data(input_file_name, width, height, ambient_color, num_samples);
 	
 	std::vector<std::vector<Color>> image = getImageMat(width, height, ambient_color, num_samples);
 
@@ -65,22 +65,6 @@ int main(int argc, char** argv) {
 
 		glfwPollEvents();
 	}
-
-	uint8_t* img = new uint8_t[width * height * 3];
-
-	int ind = 0;
-
-	for (int i = height - 1; i >= 0; i--)
-	{
-		for (int j = 0; j < width; j++)
-		{
-			img[ind++] = static_cast<int>(image[j][i].red * 255.99);
-			img[ind++] = static_cast<int>(image[j][i].green * 255.99);
-			img[ind++] = static_cast<int>(image[j][i].blue * 255.99);
-		}
-	}
-
-	stbi_write_png("rendered_033.png", width, height, 3, img, width * 3);
 
 	glfwTerminate();
 
