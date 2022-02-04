@@ -12,7 +12,7 @@ int main() {
 
 	int width, height;
 	Color ambient_color;
-	get_data("B:/IITD/Sem8/COL781/Assignment 1/input/input.json", width, height, ambient_color);
+	get_data("../input/input.json", width, height, ambient_color);
 	
 	/*int width = 800, height = 600;
 
@@ -33,9 +33,46 @@ int main() {
 	}
 
 	stbi_write_png("rendered10.png", width, height, 3, img, width * 3);*/
+	
+	std::vector<std::vector<Color>> image = getImageMat(width, height, ambient_color, 4);
 
-	glfwInit();
+	unsigned char* data_ = new unsigned char[width * height * 3];
 
+	int id = 0;
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			data_[id++] = image[j][i].red * 255.59;
+			data_[id++] = image[j][i].green * 255.59;
+			data_[id++] = image[j][i].blue * 255.59;
+		}
+	}
+
+	if (!glfwInit()) {
+		return -1;
+	}
+
+	GLFWwindow* window = glfwCreateWindow(width, height, "Assignment 1", NULL, NULL);
+
+	if (!window) {
+		return -1;
+	}
+
+	glfwMakeContextCurrent(window);
+
+	while (!glfwWindowShouldClose(window))
+	{
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, data_);
+
+		glfwSwapBuffers(window);
+
+		glfwPollEvents();
+	}
+
+	glfwTerminate();
 
 	return 0;
 }

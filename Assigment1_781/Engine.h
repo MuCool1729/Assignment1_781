@@ -33,6 +33,11 @@ const int MAX_DEPTH = 3;
 void get_data(std::string filename, int& width, int& height, Color& ambient_light) {
 	std::ifstream input_file(filename);
 
+	if (!input_file) {
+		std::cerr << "Error in opening file at " << filename << "\n";
+		return;
+	}
+
 	json j_if = json::parse(input_file);
 
 	width = (int)j_if["width"];
@@ -196,13 +201,14 @@ Color phongModel(Vec intersection_point, Vec viewing_direction, Vec normal, std:
 			continue;
 		}
 
-		Vec reflected_ray = normal * 2 * cos_theta - incident_ray;
+		Vec reflected_ray = normal * 2 * cos_theta - incident_ray.normalize();
 
 		ret += light_color * model_material.Kd * cos_theta;
 
 		double cos_alpha = reflected_ray.normalize().dot(viewing_direction.normalize());
 		if (cos_alpha > 0) {
 			ret += light_color * model_material.Ks * pow(cos_alpha, model_material.specular_exponent);
+			//std::cout << "Specular is being done" << std::endl;
 		}
 	}
 
