@@ -2,6 +2,7 @@
 
 #include "vec.h"
 
+// Ray with origin and direction
 class Ray {
 public:
 

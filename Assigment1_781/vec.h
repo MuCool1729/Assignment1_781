@@ -3,6 +3,7 @@
 #include "math.h"
 #include <iostream>
 
+// Vector with x, y and z
 class Vec {
 public:
 	double x, y, z;
@@ -13,18 +14,23 @@ public:
 
 	Vec(const Vec &v):x(v.x),y(v.y),z(v.z){}
 
+	// Magnitude of the vector
 	double magnitude() {
 		return sqrt((x * x) + (y * y) + (z * z));
 	}
 
+	// Normalization of the vector
 	Vec normalize() {
 		double magnitude = sqrt((x * x) + (y * y) + (z * z));
 		return Vec(x / magnitude, y / magnitude, z / magnitude);
 	}
 
+	// Negative of the vector
 	Vec negative() {
 		return Vec(-x, -y, -z);
 	}
+
+	// Some operator overloading for ease of coding and reading
 	
 	Vec operator +(Vec const& obj) {
 		Vec res;
@@ -99,6 +105,7 @@ public:
 		return (x == obj.x && y == obj.y && z == obj.z);
 	}
 
+	// self cross obj cross product
 	Vec cross(Vec const& obj) {
 		Vec res;
 		res.x = y * obj.z - z * obj.y;
@@ -106,6 +113,8 @@ public:
 		res.z = x * obj.y - y * obj.x;
 		return res;
 	}
+
+	// dot product
 	double dot(Vec const& obj) {
 		double ans = 0;
 		ans += (x * obj.x);

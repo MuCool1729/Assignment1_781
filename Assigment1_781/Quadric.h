@@ -3,10 +3,15 @@
 #include "Vec.h"
 #include "Object.h"
 
+// Quadric object
+// The equation of quadric we are using is as below
+// Q(x,y,z) = Ax2 + By2 + Cz2 + Dxy+ Exz + Fyz + Gx + Hy + Iz + J 
 class Quadric : public Object
 {
 public:
 	double A, B, C, D, E, F, G, H, I, J;
+
+	// Constructors
 
 	Quadric() :A(0), B(0), C(0), D(0), E(0), F(0), G(0), H(0), I(0), J(0) {
 		this->color = Color(1.0, 1.0, 1.0, 1.0);
@@ -31,8 +36,12 @@ public:
 		this->material = material;
 	}
 
-	// Q(x,y,z) = Ax2 + By2 + Cz2 + Dxy+ Exz + Fyz + Gx + Hy + Iz + J 
-
+	/// <summary>
+	/// returns normal at the intersection point
+	/// No need to verify point on surface as it is called after finding intersection point
+	/// </summary>
+	/// <param name="intersection_point"></param>
+	/// <returns></returns>
 	Vec getNormalAt(Vec intersection_point) override
 	{
 		double xn, yn, zn, xi, yi, zi;
@@ -45,10 +54,19 @@ public:
 		return Vec(xn, yn, zn).normalize();
 	}
 
+	/// <summary>
+	/// Returns color of the quadric
+	/// </summary>
+	/// <returns></returns>
 	Color getColor() override {
 		return color;
 	}
 
+	/// <summary>
+	/// Calculates the intersection distance for the given ray
+	/// </summary>
+	/// <param name="ray">ray for which intersection to be found</param>
+	/// <returns>Distance from ray origin</returns>
 	double findIntersection(Ray ray) override
 	{
 		double a, b, c, xo, yo, zo, xd, yd, zd;

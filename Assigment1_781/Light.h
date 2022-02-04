@@ -3,6 +3,7 @@
 #include "Vec.h"
 #include "Color.h"
 
+// Light at given position with color
 class Light {
 public:
 	Vec pos;

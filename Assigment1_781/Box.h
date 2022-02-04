@@ -3,13 +3,19 @@
 #include "Triangle.h"
 #include <vector>
 
+// Box object
 class Box : public Object
 {
 public:
 
+	// Length, Breadth and Height of the box
 	double l, b, h;
+	/// centre of the box and local x,y,z axis of the box(in box co-ordinate system where centre is origin)
 	Vec centre, vx, vy, vz;
+	// We are discribing box as collection of 12 triangles
 	std::vector<Triangle> face_triangles;
+
+	// Constructors
 
 	Box() :centre(0, 0, 0), l(1), b(1), h(1), vx(1, 0, 0), vy(0, 1, 0) {
 		this->color = Color(1.0, 1.0, 1.0, 1.0);
@@ -39,6 +45,9 @@ public:
 		addFaces();
 	}
 
+	/// <summary>
+	///	It adds 12 triangles(2 for each face) for the given box
+	/// </summary>
 	void addFaces() {
 
 		Vec c = centre * 2;
@@ -77,10 +86,19 @@ public:
 		face_triangles.push_back(Triangle(utl, ltl, ltr));
 	}
 
+	/// <summary>
+	/// Returns color of the box
+	/// </summary>
+	/// <returns></returns>
 	Color getColor() override {
 		return color;
 	}
 
+	/// <summary>
+	/// Returns normal at intersection point
+	/// </summary>
+	/// <param name="intersection_point"></param>
+	/// <returns></returns>
 	Vec getNormalAt(Vec intersection_point) override
 	{
 		for (Triangle t : face_triangles) {
@@ -91,6 +109,11 @@ public:
 		return Vec(0, 0, 0);
 	}
 
+	/// <summary>
+	/// Finds intersection distance for given ray
+	/// </summary>
+	/// <param name="ray">input ray</param>
+	/// <returns>distance from ray origin</returns>
 	double findIntersection(Ray ray) override {
 		double min_dist = -1;
 

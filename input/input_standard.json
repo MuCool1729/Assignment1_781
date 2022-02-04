@@ -46,6 +46,27 @@
     ],
     "scene": [
         {
+            "Sphere":{
+                "centre":[100,240,30],
+                "radius":70,
+                "color": [
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                "material": {
+                    "Ka": 0,
+                    "Kd": 0.03,
+                    "Ks": 0.2,
+                    "refractive_index": 1.5,
+                    "specular_exponent": 125,
+                    "Krg": 0.01,
+                    "Ktg": 1
+                }
+            }
+        },
+        {
             "Quadric":{
                 "A": 1,
                 "B": 0,
@@ -71,6 +92,53 @@
                     "specular_exponent": 18,
                     "Krg": 0.1,
                     "Ktg": 0.3
+                }
+            }
+        },
+        {
+            "Triangle":{
+                "A":[800,300,0],
+                "B":[800,300,300],
+                "C":[800,550,150],
+                "color": [
+                    0.3,
+                    0.8,
+                    0.2,
+                    1
+                ],
+                "material": {
+                    "Ka": 0.2,
+                    "Kd": 0.1,
+                    "Ks": 0.4,
+                    "refractive_index": -1,
+                    "specular_exponent": 2,
+                    "Krg": 0.1,
+                    "Ktg": 0
+                }
+            }
+        },
+        {
+            "Box":{
+                "centre":[200,200,-200],
+                "l":100,
+                "b":50,
+                "h":80,
+                "vx":[1,0,0],
+                "vy":[0,1,0],
+                "color": [
+                    1,
+                    1,
+                    0.3,
+                    1
+                ],
+                "material": {
+                    "Ka": 0.05,
+                    "Kd": 0.8,
+                    "Ks": 0.3,
+                    "refractive_index": -1,
+                    "specular_exponent": 3,
+                    "Krg": 0.05,
+                    "Ktg": 0.05
                 }
             }
         },
@@ -143,12 +211,12 @@
                     1
                 ],
                 "material": {
-                    "Ka": 0,
-                    "Kd": 0,
-                    "Ks": 1,
+                    "Ka": 0.05,
+                    "Kd": 0.3,
+                    "Ks": 0.2,
                     "refractive_index": -1,
-                    "specular_exponent": 1000,
-                    "Krg": 0.9,
+                    "specular_exponent": 14,
+                    "Krg": 0,
                     "Ktg": 0
                 }
             }

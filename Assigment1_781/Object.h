@@ -5,6 +5,7 @@
 #include "Color.h"
 #include "Material.h"
 
+// Parent class of all objects(like box)
 class Object {
 public:
 

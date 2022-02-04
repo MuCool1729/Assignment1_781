@@ -4,12 +4,15 @@
 #include "Object.h"
 #include "Color.h"
 
+// Sphere object with radius and centre
 class Sphere : public Object
 {
 public:
 
 	Vec centre;
 	double radius;
+
+	// Constructors
 
 	Sphere() :centre(0.0, 0.0, 0.0), radius(1.0) {
 		this->color = Color(1.0, 1.0, 1.0, 1.0);
@@ -31,16 +34,30 @@ public:
 		this->material = material;
 	}
 
+	/// <summary>
+	/// Check whether the point is on surface or not
+	/// </summary>
+	/// <param name="point"></param>
+	/// <returns></returns>
 	bool isOnSurface(Vec point) {
 		double distance = ((centre - point) * (centre - point)).Sum();
 		distance = sqrt(distance);
 		return (abs(distance - radius) <= 0.001);
 	}
 
+	/// <summary>
+	/// Returns color of the sphere
+	/// </summary>
+	/// <returns></returns>
 	Color getColor() override{
 		return color;
 	}
 
+	/// <summary>
+	/// Returns normal at the given point
+	/// </summary>
+	/// <param name="intersection_point"></param>
+	/// <returns></returns>
 	Vec getNormalAt(Vec intersection_point) override {
 		Vec ret(0, 0, 0);
 		if (isOnSurface(intersection_point)) {
@@ -50,6 +67,11 @@ public:
 		return ret;
 	}
 
+	/// <summary>
+	/// Returns distance of sphere from ray origin(if not intersecting return -1)
+	/// </summary>
+	/// <param name="ray"></param>
+	/// <returns></returns>
 	double findIntersection(Ray ray) override {
 		Vec ray_origin = ray.origin;
 		Vec ray_direction = ray.direction.normalize();

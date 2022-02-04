@@ -8,34 +8,25 @@
 
 #include "Engine.h"
 
-int main() {
+int main(int argc, char** argv) {
 
-	int width, height, num_samples;
-	Color ambient_color;
-	get_data("../input/input.json", width, height, ambient_color, num_samples);
-	
-	/*int width = 800, height = 600;
-
-	std::vector<std::vector<Color>> image = getImageMat(width, height, Color(1, 1, 1, 0.3));
-
-	uint8_t* img = new uint8_t[width * height * 3];
-
-	int ind = 0;
-
-	for (int i = height-1; i >= 0; i--)
-	{
-		for (int j = 0; j < width; j++)
-		{
-			img[ind++] = static_cast<int>(image[j][i].red * 255.99);
-			img[ind++] = static_cast<int>(image[j][i].green * 255.99);
-			img[ind++] = static_cast<int>(image[j][i].blue * 255.99);
-		}
+	// Take input from arguments
+	/*if (argc < 2) {
+		std::cerr << "Please provide an input file location.";
+		std::cerr << "\n Use: .\\a.exe <input_file_path>" << std::endl;
+		return -1;
 	}
 
-	stbi_write_png("rendered10.png", width, height, 3, img, width * 3);*/
+	std::string input_file_name = std::string(argv[1]);*/
+
+	// Get data
+	int width, height, num_samples;
+	Color ambient_color;
+	get_data("../input/input_standard.json", width, height, ambient_color, num_samples);
 	
 	std::vector<std::vector<Color>> image = getImageMat(width, height, ambient_color, num_samples);
 
+	// Put the data in 1D array to be displayed using OpenGL
 	unsigned char* data_ = new unsigned char[width * height * 3];
 
 	int id = 0;
@@ -49,6 +40,7 @@ int main() {
 		}
 	}
 
+	// Initialize GLFW and create a window
 	if (!glfwInit()) {
 		return -1;
 	}
@@ -59,8 +51,10 @@ int main() {
 		return -1;
 	}
 
+	// Make window as current context
 	glfwMakeContextCurrent(window);
 
+	// Render the image we got
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -71,6 +65,22 @@ int main() {
 
 		glfwPollEvents();
 	}
+
+	uint8_t* img = new uint8_t[width * height * 3];
+
+	int ind = 0;
+
+	for (int i = height - 1; i >= 0; i--)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			img[ind++] = static_cast<int>(image[j][i].red * 255.99);
+			img[ind++] = static_cast<int>(image[j][i].green * 255.99);
+			img[ind++] = static_cast<int>(image[j][i].blue * 255.99);
+		}
+	}
+
+	stbi_write_png("rendered_033.png", width, height, 3, img, width * 3);
 
 	glfwTerminate();
 

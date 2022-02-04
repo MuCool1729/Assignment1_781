@@ -21,15 +21,27 @@
 
 using json = nlohmann::json;
 
+// Using global variables to store camera position and the point where camera is pointing to
 Vec camera_position, camera_lookat;
-
+// World origin and up vector
 Vec origin(0, 0, 0);
 Vec world_up(0, 1, 0);
+// List of objects and light sources in the scene
 std::vector<Object*> models;
 std::vector<Light> lights;
+// accuracy for avoiding same object intersection in recursive tracing
 const double accuracy = 0.0001;
+// Max depth upto which recursive ray tracing should be done
 int MAX_DEPTH = 3;
 
+/// <summary>
+/// Reads input from JSON file
+/// </summary>
+/// <param name="filename"></param>
+/// <param name="width"></param>
+/// <param name="height"></param>
+/// <param name="ambient_light"></param>
+/// <param name="num_samples"></param>
 void get_data(std::string filename, int& width, int& height, Color& ambient_light, int& num_samples) {
 	std::ifstream input_file(filename);
 
@@ -145,6 +157,13 @@ void get_data(std::string filename, int& width, int& height, Color& ambient_ligh
 	}
 }
 
+/// <summary>
+/// Returns reflected ray
+/// </summary>
+/// <param name="incident"></param>
+/// <param name="normal"></param>
+/// <param name="intersection_point"></param>
+/// <returns></returns>
 Ray getReflected(Ray incident, Vec normal, Vec intersection_point) {
 
 	Vec reflected_dir = incident.direction - normal * 2 * (incident.direction.dot(normal.normalize()));
@@ -152,6 +171,15 @@ Ray getReflected(Ray incident, Vec normal, Vec intersection_point) {
 	return Ray(intersection_point, reflected_dir.normalize());
 }
 
+/// <summary>
+/// Returns refracted ray
+/// </summary>
+/// <param name="incident"></param>
+/// <param name="normal"></param>
+/// <param name="intersection_point"></param>
+/// <param name="incident_ri"></param>
+/// <param name="transmit_ri"></param>
+/// <returns></returns>
 Ray getRefracted(Ray incident, Vec normal, Vec intersection_point, double incident_ri, double transmit_ri) {
 
 	double cos_theta_i = normal.normalize().dot(incident.direction.normalize());
@@ -175,6 +203,10 @@ Ray getRefracted(Ray incident, Vec normal, Vec intersection_point, double incide
 	return Ray(intersection_point, refracted_dir);
 }
 
+/// <summary>
+/// Generates random double between [0,1]
+/// </summary>
+/// <returns></returns>
 double get_random_double() {
 	std::random_device rd;
 	std::uniform_real_distribution<double> dist(0.0, 1.0);
@@ -182,9 +214,22 @@ double get_random_double() {
 	return dist(generator);
 }
 
+/// <summary>
+/// Returns value of color at given point using phong illumination model
+/// </summary>
+/// <param name="intersection_point"></param>
+/// <param name="viewing_direction"></param>
+/// <param name="normal"></param>
+/// <param name="interfering_lights"></param>
+/// <param name="ambient_light"></param>
+/// <param name="reflected_color"></param>
+/// <param name="refracted_color"></param>
+/// <param name="model_material"></param>
+/// <returns></returns>
 Color phongModel(Vec intersection_point, Vec viewing_direction, Vec normal, std::vector<Light> interfering_lights,
 	Color ambient_light, Color reflected_color, Color refracted_color, Material model_material) {
 
+	// Flip the normal if not in same direction
 	if (viewing_direction.dot(normal) < 0) {
 		normal = normal * -1;
 	}
@@ -198,6 +243,7 @@ Color phongModel(Vec intersection_point, Vec viewing_direction, Vec normal, std:
 		Color light_color = interfering_lights[i].color;
 		Vec incident_ray = interfering_lights[i].pos - intersection_point;
 
+		// If any light is falling directly or not
 		double cos_theta = incident_ray.normalize().dot(normal);
 		if (cos_theta < 0) {
 			continue;
@@ -207,14 +253,12 @@ Color phongModel(Vec intersection_point, Vec viewing_direction, Vec normal, std:
 
 		ret += light_color * model_material.Kd * cos_theta;
 
+		// Check for specular
 		double cos_alpha = reflected_ray.normalize().dot(viewing_direction.normalize());
 		if (cos_alpha > 0) {
 			ret += light_color * model_material.Ks * pow(cos_alpha, model_material.specular_exponent);
-			//std::cout << "Specular is being done" << std::endl;
 		}
 	}
-
-	//std::cout << "After checking interfering lights, color is " << ret << "\n";
 
 	ret += ambient_light * model_material.Ka;
 
@@ -222,18 +266,22 @@ Color phongModel(Vec intersection_point, Vec viewing_direction, Vec normal, std:
 
 	ret += refracted_color * model_material.Ktg;
 
-	//std::cout << "After checking on reflected, refracted and ambient final color is " << ret << "\n";
-
 	ret.clip();
-
-	//std::cout << "Color after clipping is " << ret << "\n";
 
 	return ret;
 }
 
+/// <summary>
+/// Traces the given ray
+/// </summary>
+/// <param name="r"></param>
+/// <param name="ambient_light"></param>
+/// <param name="refractive_index">Refractive index of the model where ray is travelling</param>
+/// <param name="depth">Ray tracing tree depth</param>
+/// <returns></returns>
 Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 
-	// Closest
+	// Finding closest object
 
 	std::vector<double> intersection_distance;
 	int closest_index = -1;
@@ -241,7 +289,7 @@ Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 	for (int i = 0; i < models.size(); i++)
 	{
 		intersection_distance.push_back(models[i]->findIntersection(r));
-		//std::cout << "Intersection distance is " << intersection_distance[i] << "\n";
+
 		if (intersection_distance[i] > accuracy)
 		{
 			if (closest_index == -1)
@@ -255,22 +303,22 @@ Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 		}
 	}
 
+	// If not found return black
 	if (closest_index == -1) {
-		//std::cout << "Not intersecting\n";
 		return Color(0, 0, 0, 1);
 	}
 
-	// Normal
+	// Normal at intersection point
 
 	Vec intersection_point = r.origin + r.direction.normalize() * intersection_distance[closest_index];
 	Vec normal = models[closest_index]->getNormalAt(intersection_point);
 
+	// Some glitch may be
 	if (normal == Vec(0, 0, 0)) {
-		//std::cout << "Normal returned 0\n";
 		return Color(0, 0, 0, 1);
 	}
 
-	// Lights
+	// Checking the interfering lights at the intersection point
 
 	std::vector<Light> interfering_lights;
 
@@ -294,18 +342,14 @@ Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 			interfering_lights.push_back(lights[i]);
 		}
 	}
-
-	//std::cout << "Total interfering lights are " << interfering_lights.size() << "\n";
-
-	// Reflections and Refractions
+	
+	// Checking Reflections and Refractions
 
 	Color reflected_color(0, 0, 0, 1), refracted_color(0, 0, 0, 1);
 
 	if (depth < MAX_DEPTH) {
 
 		Ray reflected_ray = getReflected(r, normal, intersection_point);
-
-		//std::cout << "Reflection with depth " << depth << "\n";
 
 		reflected_color = traceRay(reflected_ray, ambient_light, refractive_index, depth + 1);
 
@@ -324,24 +368,28 @@ Color traceRay(Ray r, Color ambient_light, double refractive_index, int depth) {
 		}
 	}
 
-	// Phong model
-
-	//std::cout << "Calling Phong: \n";
+	// Phong model call
 
 	Color final_color = phongModel(intersection_point, r.direction * -1, normal, interfering_lights, ambient_light,
 		reflected_color, refracted_color, models[closest_index]->material);
 
-	//std::cout << "Phong completed with: " << final_color << "\n";
 
 	final_color = final_color * models[closest_index]->color;
 
 	final_color.clip();
 
-	//std::cout << "Final color is " << final_color << "\n";
 
 	return final_color;
 }
 
+/// <summary>
+/// To calculate matrix of color values for the window
+/// </summary>
+/// <param name="width"></param>
+/// <param name="height"></param>
+/// <param name="ambient_light"></param>
+/// <param name="num_samples"></param>
+/// <returns>Matrix of colors for window</returns>
 std::vector<std::vector<Color>> getImageMat(int width, int height, Color ambient_light, int num_samples = 16) {
 
 	Vec cam_pos(camera_position);
@@ -352,6 +400,7 @@ std::vector<std::vector<Color>> getImageMat(int width, int height, Color ambient
 	Vec camera_right = world_up.cross(a).normalize();
 	Vec camera_up = a.cross(camera_right).normalize();
 
+	// Finding lower left corner of the camera in world co-ordinate system
 	Vec lower_left_corner = cam_pos - camera_right * 0.5 * width - camera_up * 0.5 * height - a;
 
 	std::vector<std::vector<Color>> ret(width, std::vector<Color>(height));
@@ -360,27 +409,25 @@ std::vector<std::vector<Color>> getImageMat(int width, int height, Color ambient
 	{
 		for (int j = 0; j < height; j++)
 		{
+			// Calculate num_samples samples for given pixel and average it out to get color at that pixel
+			// Super sampling for Anti-aliasing
 			Color color(0, 0, 0, 1);
 			for (int k = 0; k < num_samples; ++k)
 			{
 				double u = (i + get_random_double()) / (width - 1);
 				double v = (j + get_random_double()) / (height - 1);
-				// ray(origin, lower_left_corner + u*horizontal + v*vertical - origin);
-				//origin = lookfrom;
-				//horizontal = viewport_width * u(camera right);
-				//vertical = viewport_height * v;
 
 				Ray r(cam_pos, lower_left_corner + camera_right * u * width + camera_up * v * height - cam_pos);
 
 				Color ret_color = traceRay(r, ambient_light, 1, 0);
 				color += ret_color;
 
-				//std::cout << i << " " << j << " " << k << ": " << ret_color << "\n";
 			}
 
 			color = color * (1 / (double)num_samples);
 			ret[i][j] = color;
 		}
+		// Priting the progress
 		if (i % 20 == 0) {
 			std::cout << "Completed " << i << std::endl;
 		}
