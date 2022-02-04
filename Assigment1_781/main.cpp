@@ -10,9 +10,9 @@
 
 int main() {
 
-	int width, height;
+	int width, height, num_samples;
 	Color ambient_color;
-	get_data("../input/input.json", width, height, ambient_color);
+	get_data("../input/input.json", width, height, ambient_color, num_samples);
 	
 	/*int width = 800, height = 600;
 
@@ -34,7 +34,7 @@ int main() {
 
 	stbi_write_png("rendered10.png", width, height, 3, img, width * 3);*/
 	
-	std::vector<std::vector<Color>> image = getImageMat(width, height, ambient_color, 4);
+	std::vector<std::vector<Color>> image = getImageMat(width, height, ambient_color, num_samples);
 
 	unsigned char* data_ = new unsigned char[width * height * 3];
 

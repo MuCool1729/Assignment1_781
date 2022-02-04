@@ -1,6 +1,8 @@
 {
     "height": 600,
     "width": 800,
+    "max_depth": 5,
+    "num_samples": 4,
     "camera": {
         "position": [
             -400,
@@ -18,7 +20,7 @@
             "position": [
                 0,
                 200,
-                0
+                -300
             ],
             "color": [
                 1,
@@ -36,35 +38,22 @@
     ],
     "scene": [
         {
-            "Sphere": {
-                "centre": [
-                    200,
-                    50,
-                    150
+            "Triangle": {
+                "A": [
+                    1000,
+                    2000,
+                    0
                 ],
-                "radius": 100,
-                "color": [
-                    1,
-                    0,
-                    0,
-                    1
+                "B": [
+                    1000,
+                    -1000,
+                    -2000
                 ],
-                "material": {
-                    "Ka": 0.3,
-                    "Kd": 0.1,
-                    "Ks": 0.6,
-                    "refractive_index": -1,
-                    "specular_exponent": 9,
-                    "Krg": 0,
-                    "Ktg": 0
-                }
-            }
-        },
-        {
-            "Triangle":{
-                "A":[500,1000,0],
-                "B":[500,-500,-1000],
-                "C":[500,-500,1000],
+                "C": [
+                    1000,
+                    -1000,
+                    2000
+                ],
                 "color": [
                     1,
                     1,
@@ -73,11 +62,40 @@
                 ],
                 "material": {
                     "Ka": 0,
-                    "Kd": 0.1,
+                    "Kd": 0.3,
                     "Ks": 1,
                     "refractive_index": -1,
                     "specular_exponent": 1425,
                     "Krg": 0.8,
+                    "Ktg": 0
+                }
+            }
+        },
+        {
+            "Quadric":{
+                "A": 1,
+                "B": 0,
+                "C": 1,
+                "D": 0,
+                "E": 0,
+                "F": 0,
+                "G": -500,
+                "H": 0,
+                "I": -400,
+                "J": 94400,
+                "color": [
+                    0,
+                    0.3,
+                    1,
+                    1
+                ],
+                "material": {
+                    "Ka": 0.05,
+                    "Kd": 0.3,
+                    "Ks": 0.2,
+                    "refractive_index": -1,
+                    "specular_exponent": 14,
+                    "Krg": 0,
                     "Ktg": 0
                 }
             }

@@ -28,9 +28,9 @@ Vec world_up(0, 1, 0);
 std::vector<Object*> models;
 std::vector<Light> lights;
 const double accuracy = 0.0001;
-const int MAX_DEPTH = 3;
+int MAX_DEPTH = 3;
 
-void get_data(std::string filename, int& width, int& height, Color& ambient_light) {
+void get_data(std::string filename, int& width, int& height, Color& ambient_light, int& num_samples) {
 	std::ifstream input_file(filename);
 
 	if (!input_file) {
@@ -42,6 +42,8 @@ void get_data(std::string filename, int& width, int& height, Color& ambient_ligh
 
 	width = (int)j_if["width"];
 	height = (int)j_if["height"];
+	MAX_DEPTH = (int)j_if["max_depth"];
+	num_samples = (int)j_if["num_samples"];
 
 	camera_position = Vec((double)j_if["camera"]["position"][0], (double)j_if["camera"]["position"][1],
 		(double)j_if["camera"]["position"][2]);
