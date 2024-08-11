@@ -49,27 +49,27 @@ We are rendering the matrix of RGB values we are getting after ray tracing using
 
 ### Examples
 
-![Image rendered without anti-aliasing](B:\IITD\Sem8\COL781\Assignment 1\Assigment1_781\rendered_01.png)
+![Image rendered without anti-aliasing](Assigment1_781/rendered_01.png)
 
 ​																								| <b>Image rendered with anti-aliasing (16 samples)</b>|
 
 
 
-![Without anti-aliasing](B:\IITD\Sem8\COL781\Assignment 1\Assigment1_781\rendered_02.png)
+![Without anti-aliasing](Assigment1_781/rendered_02.png)
 
 ​																									| <b>Image rendered without anti-aliasing</b>|
 
 
 
-​										![Image with refraction](B:\IITD\Sem8\COL781\Assignment 1\Assigment1_781\rendered_03.png)
+​										![Image with refraction](Assigment1_781/rendered_03.png)
 
 ​																									| <b>Image rendered with refraction(depth=3)</b>|
 
-![Refraction](B:\IITD\Sem8\COL781\Assignment 1\Assigment1_781\rendered_033.png)
+![Refraction](Assigment1_781/rendered_033.png)
 
 ​																									| **Image rendered with refraction(depth=5)**|
 
-![Image with reflection](B:\IITD\Sem8\COL781\Assignment 1\Assigment1_781\rendered_04.png)
+![Image with reflection](Assigment1_781/rendered_04.png)
 
 ​																									| <b>Image rendered with reflection</b>|
 
